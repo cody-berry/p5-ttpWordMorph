@@ -36,7 +36,7 @@ function setup() {
     let points = consolas.textToPoints('Start! Press 1, 2, or 3', 10, height/2, 40,
                                     {sampleFactor: 0.3})
     for (let i = 0; i < points.length; i++){
-        vehicles.push(new Vehicle(points[i].x, points[i].y, color(map(points[i].x, 0, width, 0, 360), 100, 100)))
+        vehicles.push(new Vehicle(points[i].x, points[i].y, color(map(points[i].x, 10, width-80, 0, 360), 100, 100)))
     }
 }
 
@@ -111,6 +111,37 @@ function displayDebugCorner() {
 }
 
 
+function changeText(newPoints, startX, endX) {
+    let vehicleTemp = vehicles
+
+    // if we have to remove vehicles, we still add new ones but they are the
+    // exact same as the old ones with a different home
+    if (vehicleTemp.length >= newPoints.length) {
+        vehicles = []
+        for (let i = 0; i < newPoints.length; i++) {
+            let v = vehicleTemp[i]
+            v.target = new p5.Vector(newPoints[i].x, newPoints[i].y)
+            vehicles.push(v)
+        }
+    }
+    // if we have to add points, we keep the vehicles with different home
+    // points, and then we iterate again through the rest of the new points
+    else {
+        for (let i = 0; i < vehicles.length; i++) {
+            vehicles[i] = vehicleTemp[i]
+            vehicles[i].target = newPoints[i]
+        } for (let i = vehicles.length; i < newPoints.length; i++) {
+            vehicles[i] =
+        }
+    }
+
+    for (let i = 0; i < vehicles.length; i++) {
+        let v = vehicles[i]
+        v.color = color(map(v.target.x, startX, endX, 0, 360), 100, 100)
+    }
+}
+
+
 function keyPressed() {
     /* stop sketch */
     if (key === 'z') {
@@ -121,21 +152,12 @@ function keyPressed() {
     /* switch scenes */
     if (key === '1') {
         let points = addBigLiya()
-        vehicles = []
-        for (let i = 0; i < points.length; i++){
-            vehicles.push(new Vehicle(points[i].x, points[i].y, color(map(points[i].x, 55, width-45, 0, 360), 100, 100)))
-        }
+        changeText(points, 100, width - 80)
     } if (key === '2') {
         let points = addGiantTwo()
-        vehicles = []
-        for (let i = 0; i < points.length; i++){
-            vehicles.push(new Vehicle(points[i].x, points[i].y, color(map(points[i].x, width/2 - 80, width/2 + 100, 0, 360), 100, 100)))
-        }
+        changeText(points, width/2-80, width/2+100)
     } if (key === '3') {
         let points = addTwosDay()
-        vehicles = []
-        for (let i = 0; i < points.length; i++){
-            vehicles.push(new Vehicle(points[i].x, points[i].y, color(map(points[i].x, 100, width-100, 0, 360), 100, 100)))
-        }
+        changeText(points, 100, width-100)
     }
 }
