@@ -129,15 +129,15 @@ function changeText(newPoints, startX, endX) {
     else {
         for (let i = 0; i < vehicles.length; i++) {
             vehicles[i] = vehicleTemp[i]
-            vehicles[i].target = newPoints[i]
+            vehicles[i].target = new p5.Vector(newPoints[i].x, newPoints[i].y)
         } for (let i = vehicles.length; i < newPoints.length; i++) {
-            vehicles[i] =
+            vehicles.push(new Vehicle(newPoints[i].x, newPoints[i].y, color(map(newPoints[i].x, startX, endX, 0, 360), 100, 100)))
         }
     }
 
     for (let i = 0; i < vehicles.length; i++) {
         let v = vehicles[i]
-        v.color = color(map(v.target.x, startX, endX, 0, 360), 100, 100)
+        v.c = color(map(v.target.x, startX, endX, 0, 360), 100, 100)
     }
 }
 
