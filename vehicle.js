@@ -45,9 +45,7 @@ Vehicle.prototype.behaviors = function(){
 
     // apply our forces
     this.applyForce(seek)
-    if (mouseIsPressed){
-        this.applyForce(flee)
-    }
+    this.applyForce(flee)
 }
 
 // seeks the target

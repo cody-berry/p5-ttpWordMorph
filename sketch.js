@@ -1,12 +1,14 @@
 /**
- *  @author
- *  @date 2022.03.
+ *  @author Cody
+ *  @date 2022.03.31
  *
  *
  */
 let consolas
 let bpdots
 let instructions
+let texture
+let emitter
 
 
 let vehicles = []
@@ -15,29 +17,40 @@ let vehicles = []
 function preload() {
     consolas = loadFont('data/consola.ttf')
     bpdots = loadFont('data/bpdots.otf')
+    texture = loadImage('data/32.png')
 }
 
 
 function setup() {
     let cnv = createCanvas(600, 300)
     cnv.parent('#canvas')
+
     colorMode(HSB, 360, 100, 100, 100)
+    textFont(consolas, 12)
 
     /* initialize instruction div */
     instructions = select('#ins')
     instructions.html(`<pre>
-        [1,2,3] → switch scenes
+        [1,2,3,4] → switch scenes
+        1: Liya
+        2: Giant 2
+        3: Giant 2 plus two 2s at the side
+        4: Twosday with HB Liya
         z → freeze sketch</pre>`)
 
     createCanvas(600, 300);
     colorMode(HSB, 360, 100, 100, 100);
     fill(210, 50, 100)
     stroke(210, 50, 100)
-    let points = consolas.textToPoints('Start! Press 1, 2, or 3', 10, height/2, 40,
-                                    {sampleFactor: 0.3})
+    let points = bpdots.textToPoints('Start! Press 1, 2, 3, or 4', 10, height/2, 37,
+                                    {sampleFactor: 0.1})
     for (let i = 0; i < points.length; i++){
         vehicles.push(new Vehicle(points[i].x, points[i].y, color(map(points[i].x, 10, width-80, 0, 360), 100, 100)))
     }
+
+    emitter = new Emitter(mouseX, mouseY, [], texture)
+
+    noCursor()
 }
 
 
@@ -52,6 +65,23 @@ function addTwosDay() {
 
     pts = pts.concat(bpdots.textToPoints('2.22.22 2:22pm', 90, 175, 48, {
         sampleFactor: 0.06, // increase for more points
+    }))
+
+    return pts
+}
+
+
+function addTwos() {
+    let pts = consolas.textToPoints('2', 200, 280, 384, {
+        sampleFactor: 0.2, // increase for more points
+    })
+
+    pts = pts.concat(consolas.textToPoints('2', 75, 175, 256, {
+        sampleFactor: 0.2, // increase for more points
+    }))
+
+    pts = pts.concat(consolas.textToPoints('2', 400, 175, 256, {
+        sampleFactor: 0.2, // increase for more points
     }))
 
     return pts
@@ -82,6 +112,15 @@ function addGiantTwo() {
 
 function draw() {
     background(234, 34, 24)
+
+    emitter.pos = new p5.Vector(mouseX, mouseY)
+
+    if (frameCount % 4 === 0) {
+        emitter.emit(1)
+    }
+
+    emitter.show()
+    emitter.update()
 
     for (let i = 0; i < vehicles.length; i++){
         let vh = vehicles[i]
@@ -157,6 +196,9 @@ function keyPressed() {
         let points = addGiantTwo()
         changeText(points, width/2-80, width/2+100)
     } if (key === '3') {
+        let points = addTwos()
+        changeText(points, 100, width-100)
+    } if (key === '4') {
         let points = addTwosDay()
         changeText(points, 100, width-100)
     }
